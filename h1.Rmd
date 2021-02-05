@@ -161,7 +161,7 @@ pacf(y)
 ### Checking for Normality (graphically)
 ```{r}
 #Checking for normality graphically
-hist(y,prob=T,ylim=c(0,0.15),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
+hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
 mu<-mean(y)
 sigma<-sd(y)
@@ -309,7 +309,7 @@ Box.test (z^2, lag = 20, type="Ljung")
 ```
 
 **Observations**:  
-- We accept $H_0$ since $P_{value} > 0.05$
+- We accept $H_0$ since $P_{value} > 0.05$  
 - TS is uncorrelated (not correlated) in the variance
 
 
@@ -335,7 +335,7 @@ pacf(y)
 ### Checking for Normality (graphically)
 ```{r}
 #Checking for normality graphically
-hist(y,prob=T,ylim=c(0,0.1),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
+hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
 mu<-mean(y)
 sigma<-sd(y)
