@@ -631,9 +631,9 @@ Box.test (z, lag = 20, type="Ljung")
 ```
 
 **Observations**:  
-- We reject $H_0$ since $P_{value} < 0.05$  
-- TS is correlated in the mean
-- TS is not WN, GWN or SWN
+- We reject $H_0$ since $P_{value} < 0.05$    
+- TS is correlated in the mean    
+- TS is not WN, GWN or SWN    
 
 Checking for correlation (second moment - variance)
 ```{r}
@@ -838,8 +838,8 @@ Box.test (y, lag = 20, type="Ljung")  # Null: ro1=.=ro20=0
 ```
 
 **Observations**:  
-- We reject $H_0$ since $P_{value} < 0.05$, $\therefore$ the TS has correlated data in the mean
-- TS is not WN, GWN or SWN
+- We reject $H_0$ since $P_{value} < 0.05$, $\therefore$ the TS has correlated data in the mean   
+- TS is not WN, GWN or SWN    
 - Linear model possible. Also, non-linear model possible but not needed.
 
 ### Checking for correlation in the second moment
@@ -876,7 +876,7 @@ pacf(y)
 ### Checking for Normality (graphically)
 ```{r}
 #Checking for normality graphically
-hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
+hist(y,prob=T,ylim=c(0,0.1),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
 mu<-mean(y)
 sigma<-sd(y)
@@ -992,7 +992,7 @@ ndiffs(z, alpha=0.05, test=c("adf"))
 checking for normality (graphically)
 ```{r}
 #Checking for normality
-hist(z,prob=T,ylim=c(0,0.6),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
+hist(z,prob=T,ylim=c(0,0.65),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
 lines(density(z),lwd=2)
 mu<-mean(z)
 sigma<-sd(z)
