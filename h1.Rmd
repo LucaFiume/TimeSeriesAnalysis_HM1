@@ -2,10 +2,6 @@
 title: "Time Series Forecasting - Homework 1"
 subtitle: Group 5
 output:
-  html_document:
-    toc: yes
-    toc_depth: '4'
-    df_print: paged
   html_notebook:
     toc: yes
     toc_float: yes
@@ -25,16 +21,20 @@ data<-read.csv("Homework_1_DATA.csv",header=TRUE,sep=";",dec=",")
 ```
 
 ## First view of the data
-Analyzing data.
-Showing the head and tail of the dataset
+Analyzing data.  
+Showing the head and tail of the dataset.
+
+**Head**  
 ```{r head, echo=FALSE}
 head(data)
 ```
 
+**Tail**  
 ```{r tail, echo=FALSE}
 tail(data)
 ```
-Checking the length of each series.
+
+Checking the length of each series.  
 ```{r series-length, echo=FALSE}
 for (c in 1:ncol(data)){
   series_length <- length(which(!is.na(data[,c])))
@@ -42,7 +42,7 @@ for (c in 1:ncol(data)){
 }
 ```
 
-Assignation of series.
+Assignation of series.  
 ```{r assignation}
 series1=data[,1] [1:300]
 series2=data[,2] [1:300]
@@ -57,7 +57,9 @@ series7=data[,7]
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series1    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -68,9 +70,12 @@ acf(y)
 pacf(y)
 ```
 
+**Observations**:  
+- TS (stochastic process) looks stationary in the mean and in the variance.   
+- Based on the ACF, data might be correlated. However, we will use the Box-Ljung test to be sure.   
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
 hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
@@ -81,8 +86,14 @@ yy<-dnorm(x,mu,sigma)
 lines(x,yy,lwd=2,col="blue")
 ```
 
-### Graphical exploration (second moment - variance)
-```{r}
+**Observations**:  
+- The data may seem normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality  
+
+### Graphical exploration (second moment - variance)  
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -93,6 +104,8 @@ acf(y^2)
 pacf(y^2)
 ```
 
+**Observations**:  
+- Similar to the first moment. 
 
 ### Computing basic stats
 
@@ -112,6 +125,8 @@ kurtosis(y,method=c("moment"))
 ndiffs(y, alpha=0.05, test=c("adf")) # number of regular differences?
 ```
 
+**Observations**:  
+- TS requires no transformation to become stationary. It is already stationary.    
 
 ### Checking for Normality
 ```{r}
@@ -121,6 +136,9 @@ ndiffs(y, alpha=0.05, test=c("adf")) # number of regular differences?
 shapiro.test(y)
 ```
 
+**Observations**:  
+- We reject $H_0$ since $P_{value} < 0.05$, $\therefore$ the TS is not normally distributed.   
+
 ### Checking for correlation
 ```{r}
 # formal test for white noise (zero autocorrelations)
@@ -128,6 +146,10 @@ shapiro.test(y)
 # H1: correlated data
 Box.test (y, lag = 20, type="Ljung")  # Null: ro1=.=ro20=0
 ```
+
+**Observations**:  
+- We accept $H_0$ since $P_{value} > 0.05$, $\therefore$ the TS is not correlated in the mean.  
+- No linear model can be used since there is no linear relationship between the present and the past.  
 
 ### Checking for correlation in the second moment
 ```{r}
@@ -137,12 +159,17 @@ Box.test (y, lag = 20, type="Ljung")  # Null: ro1=.=ro20=0
 Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 ```
 
+**Observations**:  
+- We accept $H_0$ since $P_{value} > 0.05$, $\therefore$ the TS is not correlated in the variance.    
+- No quadratic model can be found.  
 
 ## Series 2
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series2    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -159,7 +186,8 @@ pacf(y)
 
 
 ### Checking for Normality (graphically)
-```{r}
+
+```{r echo=FALSE}
 #Checking for normality graphically
 hist(y,prob=T,ylim=c(0,0.15),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
@@ -174,7 +202,10 @@ lines(x,yy,lwd=2,col="blue")
 - The TS does not appear normally distributed. Data is spread.  
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -188,6 +219,7 @@ pacf(y^2)
 - Based on the ACF of the second moment (variance), there seems to be correlation  
 
 ### Computing basic stats
+
 ```{r}
 mean(y) # compute basic statistics
 sd(y)
@@ -196,6 +228,7 @@ kurtosis(y,method=c("moment"))
 ```
 
 ### Checking for CS
+
 ```{r}
 # formal unit root test (Augmented Dickey Fuller test). Testing for stationarity.
 # Ho: the process is not stationary. We need, at least, a unit root
@@ -208,6 +241,7 @@ ndiffs(y, alpha=0.05, test=c("adf")) # number of regular differences?
 - To make it stationary we need to apply the first difference  
 
 ### Checking for Normality
+
 ```{r}
 # formal normality test
 # Ho: the data is normally distributed
@@ -219,6 +253,7 @@ shapiro.test(y)
 - We reject $H_0$ since $P_{value} < 0.05$, $\therefore$ the TS is not normally distributed   
 
 ### Checking for correlation
+
 ```{r}
 # formal test for white noise (zero autocorrelations)
 # Ho: uncorrelated data
@@ -230,6 +265,7 @@ Box.test (y, lag = 20, type="Ljung")  # Null: ro1=.=ro20=0
 - We reject $H_0$ since $P_{value} < 0.05$, $\therefore$ the TS is correlated in the mean
 
 ### Checking for correlation in the second moment
+
 ```{r}
 # formal test for white noise (zero autocorrelations)
 # Ho: uncorrelated data
@@ -243,12 +279,15 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Transformed data
 
-Applying the formula without defining the difference value
-```{r}
+Applying the formula without defining the difference value (default = 1)  
+
+In sequence: plot(z), ACF(z) and PACF(z).  
+
+```{r echo=FALSE}
 # Just in case we need to take one difference to the original data (as in this case)
 
 z<-diff(y)  
-ts.plot(z)
+#ts.plot(z)
 
 par(mfrow=c(3,1))
 ts.plot(z)   
@@ -256,7 +295,7 @@ acf(z)
 pacf(z)
 ```
 **Observations**:  
-- TS looks stationary
+- After transformation, TS looks stationary  
 
 
 Checking for CS
@@ -268,7 +307,8 @@ ndiffs(z, alpha=0.05, test=c("adf"))
 - Confirmation that no transformation is needed - data is stationary  
 
 checking for normality (graphically)
-```{r}
+
+```{r echo=FALSE}
 #Checking for normality
 hist(z,prob=T,ylim=c(0,0.6),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
 lines(density(z),lwd=2)
@@ -280,7 +320,8 @@ lines(x,yy,lwd=2,col="blue")
 ```
 
 **Observations**:  
-- Normality is observed
+- The data may seem normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality   
+
 
 
 Checking for normality (formal)
@@ -317,7 +358,9 @@ Box.test (z^2, lag = 20, type="Ljung")
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series3    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -333,7 +376,7 @@ pacf(y)
 - TS seems to have correlated data
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
 hist(y,prob=T,ylim=c(0,0.1),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
@@ -349,7 +392,10 @@ lines(x,yy,lwd=2,col="blue")
 
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -425,13 +471,19 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Transformed data
 
-Applying the formula without defining the difference value
+Applying the formula without defining the difference value (default = 1)  
 ```{r}
 # Just in case we need to take one difference to the original data (as in this case)
 
 z<-diff(y)  
-ts.plot(z)
+#ts.plot(z)
 
+```
+
+Checking graphically and with formal test for stationarity, normality and correlation (in the mean and in the variance)  
+In sequence: plot(z), ACF(z) and PACF(z).  
+
+```{r echo=FALSE}
 par(mfrow=c(3,1))
 ts.plot(z)   
 acf(z)
@@ -443,11 +495,13 @@ Box.test (z, lag = 20, type="Ljung")
 
 Box.test (z^2, lag = 20, type="Ljung") 
 
+```
+```{r echo=FALSE}
 #Checking for normality
 
 shapiro.test(z)
 
-hist(z,prob=T,ylim=c(0,0.6),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
+hist(z,prob=T,ylim=c(0,0.9),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
 lines(density(z),lwd=2)
 mu<-mean(z)
 sigma<-sd(z)
@@ -455,6 +509,8 @@ x<-seq(mu-3*sigma,mu+3*sigma,length=100)
 yy<-dnorm(x,mu,sigma)
 lines(x,yy,lwd=2,col="blue")
 ```
+
+
 
 **Observations**:  
 - TS is stationary (constant mean and variance across time). No more transformations are needed.    
@@ -467,7 +523,9 @@ lines(x,yy,lwd=2,col="blue")
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series4    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -483,9 +541,9 @@ pacf(y)
 - TS shows correlation in data  
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
-hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
+hist(y,prob=T,ylim=c(0,0.001),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
 mu<-mean(y)
 sigma<-sd(y)
@@ -498,7 +556,10 @@ lines(x,yy,lwd=2,col="blue")
 - TS not normally distributed  
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -523,8 +584,6 @@ skewness(y)
 kurtosis(y,method=c("moment"))  
 ```
 
-**Observations**:  
-- bla
 
 ### Checking for CS
 
@@ -576,12 +635,15 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Transformed data
 
-Applying the formula defining the difference value = 2
-```{r}
+Applying the formula defining the difference value = 2 and checking graphically for stationarity. 
+
+In sequence: plot(z), ACF(z) and PACF(z).  
+
+```{r echo=FALSE}
 # Just in case we need to take one difference to the original data (as in this case)
 
 z<-diff(y, difference = 2)  
-ts.plot(z)
+#ts.plot(z)
 
 par(mfrow=c(3,1))
 ts.plot(z)   
@@ -602,7 +664,7 @@ ndiffs(z, alpha=0.05, test=c("adf"))
 - Confirmation that no transformation is needed - data is stationary  
 
 checking for normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality
 hist(z,prob=T,ylim=c(0,0.6),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
 lines(density(z),lwd=2)
@@ -614,7 +676,8 @@ lines(x,yy,lwd=2,col="blue")
 ```
 
 **Observations**:  
-- Normality is observed
+- The data may seem normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality  
+
 
 
 Checking for normality (formal)
@@ -649,7 +712,9 @@ Box.test (z^2, lag = 20, type="Ljung")
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series5    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -660,12 +725,12 @@ acf(y)
 pacf(y)
 ```
 **Observations**:  
-- TS seems stationary and a bit correlated  
+- TS seems stationary and could be correlated  
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
-hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
+hist(y,prob=T,ylim=c(0,0.9),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
 mu<-mean(y)
 sigma<-sd(y)
@@ -675,10 +740,14 @@ lines(x,yy,lwd=2,col="blue")
 ```
 
 **Observations**:  
-- TS appears normal
+- The data may seems normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality  
+
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -751,7 +820,9 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series6    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -767,7 +838,7 @@ pacf(y)
 
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
 hist(y,prob=T,ylim=c(0,0.6),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
@@ -779,10 +850,14 @@ lines(x,yy,lwd=2,col="blue")
 ```
 
 **Observations**:  
-- TS seems normally distributed  
+- The data may seem normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality  
+
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -857,7 +932,9 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Graphical exploration (first moment - mean)
 
-```{r}
+In sequence: plot(y), ACF(y) and PACF(y).  
+
+```{r echo=FALSE}
 y<-series7    # from now, "y" is the data we are going to work with
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -874,7 +951,7 @@ pacf(y)
 - TS has correlated data  
 
 ### Checking for Normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality graphically
 hist(y,prob=T,ylim=c(0,0.1),xlim=c(mean(y)-3*sd(y),mean(y)+3*sd(y)),col="red")
 lines(density(y),lwd=2)
@@ -889,7 +966,10 @@ lines(x,yy,lwd=2,col="blue")
 - TS seems not normally distributed  
 
 ### Graphical exploration (second moment - variance)
-```{r}
+
+In sequence: plot($y^2$), ACF($y^2$) and PACF($y^2$).  
+
+```{r echo=FALSE}
 # C.	Testing for STRICT WHITE NOISE
 
 par(mar=c(1,1,1,1)) # to adjust graphic size
@@ -965,12 +1045,15 @@ Box.test(y^2,lag=20, type="Ljung")    # Null: ro1=.=ro20=0
 
 ### Transformed data
 
-Applying the formula without defining the difference value
-```{r}
+Applying the formula without defining the difference value (default = 1) and checking graphically for stationarity. 
+
+In sequence: plot(z), ACF(z) and PACF(z).  
+
+```{r echo=FALSE}
 # Just in case we need to take one difference to the original data (as in this case)
 
 z<-diff(y)  
-ts.plot(z)
+#ts.plot(z)
 
 par(mfrow=c(3,1))
 ts.plot(z)   
@@ -990,7 +1073,7 @@ ndiffs(z, alpha=0.05, test=c("adf"))
 - Confirmation that no transformation is needed - data is stationary  
 
 checking for normality (graphically)
-```{r}
+```{r echo=FALSE}
 #Checking for normality
 hist(z,prob=T,ylim=c(0,0.65),xlim=c(mean(z)-3*sd(z),mean(z)+3*sd(z)),col="red")
 lines(density(z),lwd=2)
@@ -1002,7 +1085,7 @@ lines(x,yy,lwd=2,col="blue")
 ```
 
 **Observations**:  
-- Normality is observed
+- The data may seem normally distributed. However, to be sure we will implement the Shapiro-Wilk test for normality  
 
 
 Checking for normality (formal)
